@@ -17,14 +17,22 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cavishek.dater"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.cavishek.dater"
+      "package": "com.cavishek.dater",
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleSignIn": {
+          "apiKey": "690333661466-5hl5alr205n848q3ck6kc1f0tikngbgt.apps.googleusercontent.com",
+          "certificateHash": "4185A7DA41236B7DEACE8B5038680A262E6B64DE"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
