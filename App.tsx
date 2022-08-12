@@ -1,16 +1,26 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import StackNavigator from './src/navigation/StackNavigator'
 import { AuthProvider } from './src/context/AuthContext'
 import React from 'react'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 export default function App() {
   return (
     <NavigationContainer>
-      <AuthProvider>
-        <StackNavigator />
-      </AuthProvider>
+      <StatusBar
+        style={'auto'}
+        networkActivityIndicatorVisible
+        // backgroundColor={backgroundColor}
+      />
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <AuthProvider>
+            <StackNavigator />
+          </AuthProvider>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </NavigationContainer>
   )
 }
@@ -18,8 +28,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })

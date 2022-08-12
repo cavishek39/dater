@@ -1,6 +1,7 @@
-import { createContext, useEffect } from 'react'
+import { createContext, useEffect, useMemo } from 'react'
 import * as Google from 'expo-auth-session/providers/google'
 import { useState } from 'react'
+import useLoggedInUser from '../hooks/useLoggedInUser'
 
 const DUMMY_USER = {
   username: 'dummy',
@@ -10,7 +11,8 @@ const DUMMY_USER = {
 export const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }: any) => {
-  const [userToken, setUserToken] = useState<string | undefined>('')
+  const { setLoggedInUser, loggedInUser } = useLoggedInUser()
+  const [error, setError] = useState(null)
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -24,22 +26,43 @@ export const AuthProvider = ({ children }: any) => {
     console.log('Login initiated')
     promptAsync({
       showInRecents: true,
-    })
+    }).catch((error) => setError(error))
+  }
+
+  async function getUserInfo(userToken?: string) {
+    console.log('userToken', userToken)
+    try {
+      let userInfo = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      userInfo.json().then((ui) => {
+        setLoggedInUser(ui)
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response
-      setUserToken(authentication?.accessToken)
+      getUserInfo(authentication?.accessToken)
       console.log('Authentication response ', authentication)
     }
   }, [response])
 
-  const value = {
-    signInWithGoogle,
-    DUMMY_USER,
-    userToken,
-  }
+  const memoedValue = useMemo(
+    () => ({
+      signInWithGoogle,
+      error,
+      setLoggedInUser,
+    }),
+    [loggedInUser, error, signInWithGoogle, setLoggedInUser]
+  )
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>
+  )
 }

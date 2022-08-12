@@ -7,6 +7,6 @@ export default function useLoggedInUser() {
     'user.storage',
     MMKV_STORAGE
   )
-  console.log('loggedInUser', loggedInUser)
+  // console.log('loggedInUser', loggedInUser)
   return { loggedInUser, setLoggedInUser }
 }
