@@ -4,6 +4,7 @@ import useLoggedInUser from '../hooks/useLoggedInUser'
 import { AntDesign } from '@expo/vector-icons'
 import Swiper from 'react-native-deck-swiper'
 import { Dimensions } from 'react-native'
+import { useRef } from 'react'
 
 const DUMMY_LIST = [
   {
@@ -37,6 +38,7 @@ export default function HomeScreen({
   route,
 }: StackNavigatorProps<'HomeScreen'>) {
   const { loggedInUser, setLoggedInUser } = useLoggedInUser()
+  const swipeRef = useRef<Swiper<T>>(null)
 
   return (
     <>
@@ -52,7 +54,7 @@ export default function HomeScreen({
             style={{ height: 40, width: 40, borderRadius: 25 }}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ModalScreen')}>
           <Image
             source={require('../../assets/logo.png')}
             style={{ height: 50, width: 50, borderRadius: 25 }}
@@ -64,6 +66,7 @@ export default function HomeScreen({
       </View>
       <View style={{ flex: 1 }}>
         <Swiper
+          ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
           animateCardOpacity
           cards={DUMMY_LIST}
@@ -71,10 +74,34 @@ export default function HomeScreen({
           stackSize={5}
           cardIndex={0}
           verticalSwipe={false}
+          onSwipedLeft={() => {
+            console.log('Swipped left')
+          }}
+          onSwipedRight={() => {
+            console.log('Swipped Match')
+          }}
+          overlayLabelStyle={{
+            left: {
+              title: 'NOPE',
+              style: {
+                label: {
+                  textAlign: 'right',
+                  color: 'red',
+                },
+              },
+            },
+            right: {
+              title: 'MATCH',
+              style: {
+                label: {
+                  color: '#acf1de',
+                },
+              },
+            },
+          }}
           renderCard={(card) => (
             <View
               style={{
-                // backgroundColor: 'white',
                 backgroundColor: 'pink',
                 height: Dimensions.get('window').height / 2,
                 borderTopLeftRadius: 16,
@@ -95,6 +122,7 @@ export default function HomeScreen({
                   backgroundColor: 'white',
                   borderBottomLeftRadius: 16,
                   borderBottomRightRadius: 16,
+                  paddingHorizontal: 16,
                 }}>
                 <View
                   style={{
@@ -113,6 +141,37 @@ export default function HomeScreen({
             </View>
           )}
         />
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          marginVertical: 32,
+        }}>
+        <TouchableOpacity
+          onPress={() => swipeRef.current?.swipeLeft()}
+          style={{
+            height: 40,
+            width: 40,
+            borderRadius: 20,
+            backgroundColor: '#fdaeae',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <AntDesign name='close' size={16} color='black' />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => swipeRef.current?.swipeRight()}
+          style={{
+            height: 40,
+            width: 40,
+            borderRadius: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#acf1de',
+          }}>
+          <AntDesign name='heart' size={16} color='black' />
+        </TouchableOpacity>
       </View>
       {/* <Button
         title='Logout'

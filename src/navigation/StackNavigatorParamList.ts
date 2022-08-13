@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 export type StackNavigatorParamList = {
   HomeScreen: undefined
   ChatScreen: undefined
+  ModalScreen: undefined
 }
 
 export type StackNavigatorProps<T extends keyof StackNavigatorParamList> = {
